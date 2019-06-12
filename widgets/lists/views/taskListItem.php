@@ -71,6 +71,11 @@ $checkUrl = $task->state->getCheckUrl();
                             ->icon('fa-pencil'); ?>
                     </li>
                     <li>
+                        <?= Button::asLink(Yii::t('TasksModule.base', 'Clone task'))
+                            ->action('task.list.editTask', TaskUrl::cloneTask($task))
+                            ->icon('fa-clone'); ?>
+                    </li>
+                    <li>
                         <?= MoveContentLink::widget(['model' => $task]) ?>
                     </li>
                     <li>

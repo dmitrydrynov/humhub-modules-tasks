@@ -15,6 +15,9 @@ use humhub\modules\tasks\permissions\ManageTasks;
 use humhub\modules\user\models\UserPicker;
 use humhub\widgets\ModalClose;
 use humhub\modules\tasks\models\Task;
+use humhub\modules\tasks\models\checklist\TaskItem;
+use humhub\modules\file\widgets\Upload;
+use humhub\modules\tasks\models\scheduling\TaskReminder;
 
 class TaskController extends AbstractTaskController
 {
@@ -38,7 +41,7 @@ class TaskController extends AbstractTaskController
      * @throws \yii\base\Exception
      * @throws \yii\base\InvalidConfigException
      */
-    public function actionEdit($id = null, $cal = false, $redirect = false, $listId = null)
+    public function actionEdit($id = null, $cal = false, $redirect = false, $listId = null, $clone_id = null)
     {
         $isNewTask = empty($id);
 
@@ -47,14 +50,75 @@ class TaskController extends AbstractTaskController
         }
 
         if ($isNewTask) {
+
             $taskForm = new TaskForm(['cal' => $cal, 'taskListId' =>  $listId]);
             $taskForm->createNew($this->contentContainer);
+
+            if($clone_id) {
+                $clone_task = Task::find()->contentContainer($this->contentContainer)->where(['task.id' => $clone_id])->one();
+                
+                // init clone task
+                $new_task = clone $clone_task;
+                $new_task->id = null;
+                $new_task->isNewRecord = true;
+                
+                // clone reminders
+                $new_task->selectedReminders = [];
+                foreach (TaskReminder::findAll(['task_id' => $clone_id]) as $taskReminder) {
+                    $new_task->selectedReminders[] = $taskReminder->remind_mode;
+                }
+
+                // clone assigned and responible users
+                $new_task->assignedUsers = [];
+                $new_task->responsibleUsers = [];
+                foreach (TaskUser::findAll(['task_id' => $clone_id]) as $taskUser) {
+                    if($taskUser->user_type === Task::USER_ASSIGNED) {
+                        $new_task->assignedUsers[] = $taskUser->getUser()->guid;
+                    }
+                    if($taskUser->user_type === Task::USER_RESPONSIBLE) {
+                        $new_task->responsibleUsers[] = $taskUser->getUser()->guid;
+                    }
+                }
+
+                // 1. Find files for clone task
+                $files = $clone_task->fileManager->findAll();
+                // 2. Copy files (Upload) for new task
+                $files_new = [];
+                if(count($files) > 0) {
+                    $new_task->description .= "\n\n**Attached files**\n";
+                    foreach($files as $file) {
+                        $file_path = $file->getStore()->get();
+                        $file_url = $file->getUrl();
+                        
+                        $new_task->description .= "* [{$file->file_name}]({$file_url})\n";
+
+                        $files_new[] = $file;
+                    }
+                }   
+
+
+                // clone checklist items
+                $newItems = [];
+                foreach ($clone_task->getItems()->all() as $item) {
+                    $newItems[] = $item->title;
+                }
+
+                // var_dump( $files_new ); exit;
+
+                $taskForm->task = $new_task;
+                $taskForm->is_public = $new_task->content->visibility;
+                $taskForm->translateDateTimes($new_task->start_datetime, $new_task->end_datetime, Yii::$app->timeZone, $taskForm->timeZone);
+                $taskForm->newItems = $newItems;
+            }
         } else {
+
+            $task = Task::find()->contentContainer($this->contentContainer)->where(['task.id' => $id])->one();
+
             $taskForm = new TaskForm([
-                'task' => Task::find()->contentContainer($this->contentContainer)->where(['task.id' => $id])->one(),
+                'task' => $task,
                 'cal' => $cal,
                 'redirect' => $redirect,
-                'taskListId' => $listId
+                'taskListId' => $listId,
             ]);
         }
 
@@ -65,6 +129,7 @@ class TaskController extends AbstractTaskController
         }
 
         if ($taskForm->load(Yii::$app->request->post()) && $taskForm->save()) {
+            
             if($cal) {
                 return ModalClose::widget(['saved' => true]);
             } else if($redirect) {

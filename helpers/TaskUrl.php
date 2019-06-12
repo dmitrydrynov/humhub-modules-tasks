@@ -88,6 +88,11 @@ class TaskUrl extends Url
         return static::container($task)->createUrl(static::ROUTE_EDIT_TASK, ['id' => $task->id, 'cal' => $cal, 'redirect' => $redirect, 'listId'=> $listId]);
     }
 
+    public static function cloneTask(Task $task, $cal = null, $redirect = null, $listId = null)
+    {
+        return static::container($task)->createUrl(static::ROUTE_EDIT_TASK, ['id' => null, 'cal' => $cal, 'redirect' => $redirect, 'listId'=> $listId, 'clone_id' => $task->id]);
+    }
+
     public static function proceedTask(Task $task, $status)
     {
         return static::container($task)->createUrl(static::ROUTE_PROCEED_TASK, ['id' => $task->id, 'status' => $status]);

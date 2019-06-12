@@ -17,10 +17,23 @@ use humhub\modules\tasks\widgets\AddItemsInput;
 ?>
 
 <div class="modal-body">
-    <?php foreach ($taskForm->task->items as $item) : ?>
+    <?php if(count($taskForm->task->items) > 0) foreach ($taskForm->task->items as $item) : ?>
         <div class="form-group">
             <div class="input-group">
                 <?= Html::textInput($taskForm->formName() . '[editItems][' . $item->id . ']', $item->title, [
+                    'class' => 'form-control task_item_old_input',
+                    'placeholder' => Yii::t('TasksModule.views_index_edit', 'Edit item (empty field will be removed)...')]) ?>
+                <div class="input-group-addon" style="cursor:pointer;" data-action-click="removeTaskItem">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
+    <?php endforeach; ?>
+
+    <?php if(count($taskForm->newItems) > 0) foreach ($taskForm->newItems as $item) : ?>
+        <div class="form-group">
+            <div class="input-group">
+                <?= Html::textInput($taskForm->formName() . '[newItems][]', $item, [
                     'class' => 'form-control task_item_old_input',
                     'placeholder' => Yii::t('TasksModule.views_index_edit', 'Edit item (empty field will be removed)...')]) ?>
                 <div class="input-group-addon" style="cursor:pointer;" data-action-click="removeTaskItem">
