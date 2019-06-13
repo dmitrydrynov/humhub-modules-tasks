@@ -35,6 +35,18 @@ use yii\db\Expression;
 class Events
 {
 
+    public static function onAdminMenuInit(\yii\base\Event $event)
+    {
+        $event->sender->addItem([
+            'label' => Yii::t('TasksModule.base', 'Tasks'),
+            'url' => TaskUrl::toConfig(),
+            'group' => 'settings',
+            'icon' => '<i class="fa fa-tasks"></i>',
+            'isActive' => Yii::$app->controller->module && Yii::$app->controller->module->id == 'tasks' && Yii::$app->controller->id == 'admin',
+            'sortOrder' => 650
+        ]);
+    }
+
     public static function onTopMenuInit($event)
     {
         /* @var $module Module */

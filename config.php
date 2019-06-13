@@ -6,6 +6,7 @@ use humhub\commands\IntegrityController;
 use humhub\commands\CronController;
 use humhub\modules\dashboard\widgets\Sidebar;
 use humhub\modules\space\widgets\Sidebar as SpaceSidebar;
+use humhub\modules\admin\widgets\AdminMenu;
 use humhub\modules\space\models\Membership;
 
 return array(
@@ -20,6 +21,7 @@ return array(
         ['class' => Sidebar::class, 'event' => Sidebar::EVENT_INIT, 'callback' => ['humhub\modules\tasks\Events', 'onDashboardSidebarInit']],
         ['class' => SpaceSidebar::class, 'event' => SpaceSidebar::EVENT_INIT, 'callback' => ['humhub\modules\tasks\Events', 'onSpaceSidebarInit']],
         ['class' => Membership::class, 'event' => Membership::EVENT_MEMBER_REMOVED, 'callback' => ['humhub\modules\tasks\Events', 'onMemberRemoved']],
+        ['class' => AdminMenu::class, 'event' => AdminMenu::EVENT_INIT, 'callback' => ['humhub\modules\tasks\Events', 'onAdminMenuInit']],
         ['class' => 'humhub\modules\calendar\interfaces\CalendarService', 'event' => 'getItemTypes', 'callback' => ['humhub\modules\tasks\Events', 'onGetCalendarItemTypes']],
         ['class' => 'humhub\modules\calendar\interfaces\CalendarService', 'event' => 'findItems', 'callback' => ['humhub\modules\tasks\Events', 'onFindCalendarItems']],
     ]
