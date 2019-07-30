@@ -15,8 +15,6 @@ use humhub\modules\tasks\permissions\ManageTasks;
 use humhub\modules\user\models\UserPicker;
 use humhub\widgets\ModalClose;
 use humhub\modules\tasks\models\Task;
-use humhub\modules\tasks\models\checklist\TaskItem;
-use humhub\modules\file\widgets\Upload;
 use humhub\modules\tasks\models\scheduling\TaskReminder;
 
 class TaskController extends AbstractTaskController
@@ -80,30 +78,36 @@ class TaskController extends AbstractTaskController
                     }
                 }
 
-                // 1. Find files for clone task
-                $files = $clone_task->fileManager->findAll();
-                // 2. Copy files (Upload) for new task
-                $files_new = [];
-                if(count($files) > 0) {
-                    $new_task->description .= "\n\n**Attached files**\n";
-                    foreach($files as $file) {
-                        $file_path = $file->getStore()->get();
-                        $file_url = $file->getUrl();
-                        
-                        $new_task->description .= "* [{$file->file_name}]({$file_url})\n";
-
-                        $files_new[] = $file;
-                    }
-                }   
-
-
                 // clone checklist items
                 $newItems = [];
                 foreach ($clone_task->getItems()->all() as $item) {
                     $newItems[] = $item->title;
                 }
 
-                // var_dump( $files_new ); exit;
+                // 1. Find files for clone task
+                $files = $clone_task->fileManager->findAll(); 
+                $clone_files = [];
+                // 2. Copy files (Upload) for new task
+                if(count($files) > 0) foreach($files as $file) { 
+                    
+                    $file_path = $file->getStore()->get();  
+                    $fileContent = stream_get_contents(fopen($file_path, 'r'));
+
+                    $clone_file = new \humhub\modules\file\models\File();
+
+                    if($clone_file->save()) {
+
+                        $clone_file->store->setContent($fileContent);
+                        $clone_file->file_name = $file->filename;
+                        $clone_file->mime_type = $file->mime_type;
+                        $clone_file->size = $file->size;
+                        $clone_file->save();
+
+                        $clone_files[] = $clone_file->guid;
+                    }
+                }
+
+                Yii::$app->request->setBodyParams(['fileList' => $clone_files]);
 
                 $taskForm->task = $new_task;
                 $taskForm->is_public = $new_task->content->visibility;
