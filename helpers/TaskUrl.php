@@ -42,10 +42,17 @@ class TaskUrl extends Url
     const ROUTE_EXPORT = 'export';
 
     const ROUTE_CONFIG = '/tasks/config';
+    const ROUTE_CONFIG_CUSTOM_FIELDS = '/tasks/config/custom-fields';
 
     public static function toConfig()
     {
         return static::toRoute(static::ROUTE_CONFIG);
+    }
+
+    public static function toConfigCustomFields($field_id = null)
+    {
+        $attr = $field_id ? '?field_id='.$field_id : '';
+        return static::toRoute(static::ROUTE_CONFIG_CUSTOM_FIELDS . $attr);
     }
 
     public static function globalView()

@@ -42,7 +42,7 @@ class Events
             'url' => TaskUrl::toConfig(),
             'group' => 'settings',
             'icon' => '<i class="fa fa-tasks"></i>',
-            'isActive' => Yii::$app->controller->module && Yii::$app->controller->module->id == 'tasks' && Yii::$app->controller->id == 'admin',
+            'isActive' => Yii::$app->controller->module && Yii::$app->controller->module->id == 'tasks',
             'sortOrder' => 650
         ]);
     }

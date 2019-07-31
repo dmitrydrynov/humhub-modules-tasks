@@ -17,6 +17,8 @@ use \yii\helpers\Html;
 
     <div class="panel-heading"><?= Yii::t('TasksModule.config', '<strong>Task</strong> module configuration'); ?></div>
 
+    <?= $subNav ?>
+
     <div class="panel-body">
         <?php $form = ActiveForm::begin(); ?>
         <h4>

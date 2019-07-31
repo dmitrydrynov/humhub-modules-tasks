@@ -15,7 +15,9 @@ use yii\helpers\Url;
 use humhub\modules\admin\permissions\ManageModules;
 use humhub\modules\admin\components\Controller;
 use humhub\modules\tasks\models\SnippetModuleSettings;
+use humhub\modules\tasks\models\CustomFieldsSettings;
 use yii\web\HttpException;
+use humhub\modules\tasks\widgets\AdminMenu;
 
 /**
  * 
@@ -42,7 +44,32 @@ class ConfigController extends Controller
         }
 
         return $this->render('snippet', [
-            'model' => $model
+            'model' => $model,
+            'subNav' => AdminMenu::widget(),
         ]);
     }
+
+    public function actionCustomFields()
+    {
+        $model = new CustomFieldsSettings();
+
+        if(Yii::$app->request->get('action') == 'delete' && !empty(Yii::$app->request->get('id'))) {
+            $model_for_delete = CustomFieldsSettings::findOne(Yii::$app->request->get('id'));
+            
+            if($model_for_delete) {
+                $model_for_delete->delete();
+            }
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->view->saved();
+        }
+
+        return $this->render('custom_fields', [
+            'model' => $model,
+            'fields_list' => CustomFieldsSettings::find()->all(),
+            'subNav' => AdminMenu::widget(),
+        ]);
+    }
+    
 }
