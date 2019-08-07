@@ -11,14 +11,14 @@ class m190613_115047_task_custom_field_table extends Migration
     {
         $this->createTable('task_custom_field', array(
             'id' => 'pk',
-            'internal_name' => 'varchar NOT NULL',
-            'title' => 'varchar NOT NULL',
-            'type' => 'varchar NOT NULL',
-            'value' => 'varchar',
+            'internal_name' => 'varchar(190) NOT NULL',
+            'title' => 'varchar(190) NOT NULL',
+            'type' => 'varchar(190) NOT NULL',
+            'value' => 'varchar(190)',
             'created_at' => 'datetime NOT NULL',
             'created_by' => 'int(11) NOT NULL',
             'updated_at' => 'datetime NOT NULL',
-            'updated_by' => 'int(11) NOT NULL',
+            'updated_by' => 'int(11) NOT NULL'
                 ), '');
     }
 
