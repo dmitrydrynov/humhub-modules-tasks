@@ -33,6 +33,7 @@ use humhub\modules\search\interfaces\Searchable;
 use humhub\widgets\Label;
 use humhub\modules\tasks\widgets\WallEntry;
 use humhub\modules\tasks\permissions\ManageTasks;
+use humhub\modules\tasks\models\CustomFieldsSettings;
 
 
 /**
@@ -162,6 +163,11 @@ class Task extends ContentActiveRecord implements Searchable
         $this->state = TaskState::getState($this);
     }
 
+    static public function getCustomFields()
+    {
+        return CustomFieldsSettings::find()->all();
+    }
+
     public function scenarios()
     {
         $scenarios = parent::scenarios();
@@ -242,7 +248,7 @@ class Task extends ContentActiveRecord implements Searchable
             [['cal_mode'], 'in', 'range' => TaskScheduling::$calModes],
             [['assignedUsers', 'description', 'responsibleUsers', 'selectedReminders'], 'safe'],
             [['title'], 'string', 'max' => 255],
-            [['task_list_id'], 'validateTaskList']
+            [['task_list_id'], 'validateTaskList'],
         ];
     }
 
@@ -366,7 +372,18 @@ class Task extends ContentActiveRecord implements Searchable
     public function beforeSave($insert)
     {
         $this->schedule->beforeSave();
-        return parent::beforeSave($insert);
+
+        if(parent::beforeSave($insert)) {
+
+            $custom_fields = self::getCustomFields();
+
+            if(count($custom_fields) > 0) foreach($custom_fields as $custom_field) {
+                $this->addRule(['cf_'. $custom_field->internal_name], 'safe');
+            }
+
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -398,6 +415,8 @@ class Task extends ContentActiveRecord implements Searchable
      */
     public function afterSave($insert, $changedAttributes)
     {
+        var_dump($this);
+
         parent::afterSave($insert, $changedAttributes);
 
         if($this->scenario === self::SCENARIO_EDIT) {

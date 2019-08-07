@@ -35,7 +35,8 @@ $task = $taskForm->task;
                     ['label' => Yii::t('TasksModule.views_index_edit', 'Scheduling'), 'view' => 'edit-scheduling', 'linkOptions' => ['class' => 'tab-scheduling']],
                     ['label' => Yii::t('TasksModule.views_index_edit', 'Assignment'), 'view' => 'edit-assignment', 'linkOptions' => ['class' => 'tab-assignment']],
                     ['label' => Yii::t('TasksModule.views_index_edit', 'Checklist'), 'view' => 'edit-checklist', 'linkOptions' => ['class' => 'tab-checklist']],
-                    ['label' => Yii::t('TasksModule.views_index_edit', 'Files'), 'view' => 'edit-files', 'linkOptions' => ['class' => 'tab-files']]
+                    ['label' => Yii::t('TasksModule.views_index_edit', 'Files'), 'view' => 'edit-files', 'linkOptions' => ['class' => 'tab-files']],
+                    ['label' => Yii::t('TasksModule.views_index_edit', 'Custom Fields'), 'view' => 'edit-custom-fields', 'linkOptions' => ['class' => 'tab-custom-fields']]
                 ]
             ]); ?>
 

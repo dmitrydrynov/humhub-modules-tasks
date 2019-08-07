@@ -29,7 +29,7 @@ use humhub\modules\tasks\helpers\TaskUrl;
             <?= $form->field($model, 'title')->input('text') ?>
             <?= $form->field($model, 'internal_name')->input('text') ?>
             
-            <?= $form->field($model, 'field_type')->dropDownList([
+            <?= $form->field($model, 'type')->dropDownList([
                 'number' => 'Number',
                 'text' => 'Text',
             ]); ?>
@@ -66,7 +66,7 @@ use humhub\modules\tasks\helpers\TaskUrl;
                                 <?= $field->internal_name ?>
                             </td>
                             <td>
-                                <?= $field->field_type ?>
+                                <?= $field->type ?>
                             </td>
                             <td>
                                 <?= $field->value ?>
