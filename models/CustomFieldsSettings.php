@@ -110,4 +110,16 @@ class CustomFieldsSettings extends ActiveRecord
         return (in_array($name, $columnNames));
     }
 
+
+    public function getAcronymName($str = null) {
+        $acronym = '';
+        $word = '';
+        $words = preg_split("/(\s|\-|\.)/", $str ? $str : $this->title);
+        foreach($words as $w) {
+            $acronym .= substr($w,0,1);
+        }
+        $word = $word . $acronym ;
+        return $word;
+    }
+
 }

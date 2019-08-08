@@ -10,6 +10,7 @@ use humhub\modules\tasks\widgets\TaskInfoBox;
 use humhub\modules\tasks\widgets\checklist\TaskChecklist;
 use humhub\modules\tasks\widgets\TaskRoleInfoBox;
 use humhub\widgets\Button;
+use humhub\modules\tasks\models\Task;
 
 /* @var $task \humhub\modules\tasks\models\Task */
 
@@ -32,6 +33,25 @@ if (($task->schedule->isOverdue())) {
                 'value' => $task->schedule->getFormattedDateTime(),
                 'icon' => 'fa-clock-o',
                 'textClass' => $scheduleTextClass]) ?>
+            
+            <?php 
+
+                $custom_fields = Task::getCustomFields();
+            
+                if(count($custom_fields) > 0) foreach($custom_fields as $custom_field) {
+                
+                    $field_name = 'cf_'. $custom_field->internal_name;
+                    $value = $task->$field_name ? $task->$field_name : Yii::t('TasksModule.base', 'Not specified');
+
+                    echo TaskInfoBox::widget([
+                        'title' => Yii::t('TasksModule.base', $custom_field->title),
+                        'value' => $value,
+                        'icon' => 'fa-clock-o',
+                        'textClass' => '']);
+
+                }
+
+            ?>
 
             <?php if ($task->schedule->canRequestExtension()): ?>
                 <div style="display:inline-block;vertical-align:bottom;">

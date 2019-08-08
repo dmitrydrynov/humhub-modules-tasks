@@ -21,6 +21,7 @@ use humhub\widgets\Button;
 /* @var $contentContainer \humhub\modules\content\components\ContentContainerActiveRecord */
 
 $color = $task->getColor() ? $task->getColor() : $this->theme->variable('info');
+$custom_fields = Task::getCustomFields();
 
 
 ?>
@@ -55,6 +56,21 @@ $color = $task->getColor() ? $task->getColor() : $this->theme->variable('info');
                 <?= TaskUserList::widget(['users' => $task->taskResponsibleUsers, 'style' => 'border:2px solid ' . $this->theme->variable('info'), 'type' => Task::USER_RESPONSIBLE]) ?>
                 <?= TaskUserList::widget(['users' => $task->taskAssignedUsers]) ?>
             </div>
+
+            <?php if(count($custom_fields) > 0) foreach($custom_fields as $custom_field) :
+        
+                $field_name = 'cf_'. $custom_field->internal_name;
+                $value = $task->$field_name ? $task->$field_name : 0;
+
+                ?>
+
+                <div class="task-controls pull-right toggleTaskDetails hidden-xs">
+
+                    <?= $custom_field->getAcronymName() ?> <?= $value ?>
+
+                </div>
+
+            <?php endforeach ?>
 
             <?php if ($task->isInProgress()) : ?>
                 <div class="task-controls  pull-right hidden-xs" style="width:50px;height:24px;display:inline-block;padding-top:5px;">

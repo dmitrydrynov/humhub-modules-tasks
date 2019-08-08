@@ -26,6 +26,7 @@ use yii\helpers\Html;
 /* @var $contentContainer \humhub\modules\content\components\ContentActiveRecord */
 
 $checkUrl = $task->state->getCheckUrl();
+$custom_fields = Task::getCustomFields();
 
 ?>
 
@@ -131,6 +132,23 @@ $checkUrl = $task->state->getCheckUrl();
             <?= TaskUserList::widget(['users' => $task->taskAssignedUsers]) ?>
         </div>
     <?php endif; ?>
+
+        
+    <?php if(count($custom_fields) > 0) foreach($custom_fields as $custom_field) :
+        
+        $field_name = 'cf_'. $custom_field->internal_name;
+        $value = $task->$field_name ? $task->$field_name : 0;
+
+        ?>
+
+        <div class="task-controls pull-right toggleTaskDetails hidden-xs">
+
+            <?= $custom_field->getAcronymName() ?> <?= $value ?>
+
+        </div>
+
+    <?php endforeach ?>
+
 </div>
 <?php if ($details) : ?>
     <?= TaskListDetails::widget(['task' => $task]) ?>
