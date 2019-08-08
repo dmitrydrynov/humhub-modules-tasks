@@ -1087,6 +1087,6 @@ class Task extends ContentActiveRecord implements Searchable
             ->andWhere(['task.status' => Task::STATUS_COMPLETED])
             ->sum('cf_'. $custom_field_name);
 
-        return $sum;
+        return $sum > 0 ? $sum : 0;
     }
 }
