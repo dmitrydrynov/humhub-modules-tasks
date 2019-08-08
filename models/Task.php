@@ -1083,7 +1083,7 @@ class Task extends ContentActiveRecord implements Searchable
         $sum = self::find()
             ->leftJoin('task_user', 'task.id=task_user.task_id', [])
             ->where(['task_user.user_id' => $user->id])
-            ->andWhere(['task_user.user_type' => 1])
+            ->andWhere(['task_user.user_type' => Task::USER_ASSIGNED])
             ->andWhere(['task.status' => Task::STATUS_COMPLETED])
             ->sum('cf_'. $custom_field_name);
 
