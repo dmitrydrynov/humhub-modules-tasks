@@ -22,7 +22,7 @@ class SkillPoints extends Widget
 
         return $this->render('skill_points', [
             'skill_points' => $skill_points,
-            'knowledge_points' => $knowledge_points,
+            'knowledge_points' => $knowledge_points ? $knowledge_points : 0,
         ]);
     }
 }
