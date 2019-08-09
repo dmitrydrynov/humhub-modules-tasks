@@ -14,9 +14,15 @@ class SkillPoints extends Widget
     {
 
         $skill_points = Task::gerSumCustomFieldsByUser('skill_points');
+        $knowledge_points = 0;
 
-        return $this->render('skillPoints', [
-            'skillPoints' => $skill_points,
+        if(class_exists(\humhub\modules\aJournal\models\aJournalEntry::class)) {
+            $knowledge_points = \humhub\modules\aJournal\models\aJournalEntry::getAcademicMarksbyUser();
+        }
+
+        return $this->render('skill_points', [
+            'skill_points' => $skill_points,
+            'knowledge_points' => $knowledge_points,
         ]);
     }
 }
