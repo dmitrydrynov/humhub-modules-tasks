@@ -15,7 +15,7 @@ use humhub\modules\space\models\Space;
 /**
  * CreateTask Permission
  */
-class CreateTask extends BasePermission
+class CloneTask extends BasePermission
 {
     /**
      * @inheritdoc
@@ -29,6 +29,7 @@ class CreateTask extends BasePermission
         Space::USERGROUP_OWNER,
         Space::USERGROUP_ADMIN,
         Space::USERGROUP_MODERATOR,
+        Space::USERGROUP_MEMBER,
     ];
     
     /**
@@ -44,7 +45,7 @@ class CreateTask extends BasePermission
      */
     public function getTitle()
     {
-        return Yii::t('TasksModule.base', 'Create tasks');
+        return Yii::t('TasksModule.base', 'Clone tasks');
     }
 
     /**
@@ -52,6 +53,6 @@ class CreateTask extends BasePermission
      */
     public function getDescription()
     {
-        return Yii::t('TasksModule.base', 'Allows the user to create new tasks, the user will only be able to edit and delete own tasks');
+        return Yii::t('TasksModule.base', 'Allows the user to clone exist tasks');
     }
 }

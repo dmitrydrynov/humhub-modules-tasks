@@ -43,6 +43,7 @@ class ListController extends AbstractTaskController
             'contentContainer' => $this->contentContainer,
             'canManage' =>  $this->canManageTasks(),
             'canCreate' => $this->canCreateTask(),
+            'canClone' => $this->canCloneTask(),
             'taskLists' => TaskList::findOverviewLists($this->contentContainer)->all()]);
     }
 
@@ -150,7 +151,7 @@ class ListController extends AbstractTaskController
     public function actionLoadAjax($id = null)
     {
         if(!$id) {
-            return UnsortedTaskListWidget::widget(['canManage' =>  $this->canManageTasks(), 'canCreate' => $this->canCreateTask()]);
+            return UnsortedTaskListWidget::widget(['canManage' =>  $this->canManageTasks(), 'canCreate' => $this->canCreateTask(), 'canClone' => $this->canCloneTask()]);
         }
 
         $taskList = TaskList::findById($id, $this->contentContainer);
@@ -158,7 +159,7 @@ class ListController extends AbstractTaskController
             throw new HttpException(404);
         }
 
-        return TaskListWidget::widget(['list' => $taskList, 'canManage' =>  $this->canManageTasks(), 'canCreate' => $this->canCreateTask()]);
+        return TaskListWidget::widget(['list' => $taskList, 'canManage' =>  $this->canManageTasks(), 'canCreate' => $this->canCreateTask(), 'canClone' => $this->canCloneTask()]);
     }
 
     public function actionLoadAjaxTask($id)

@@ -91,6 +91,29 @@ $custom_fields = Task::getCustomFields();
         </div>
     <?php endif; ?>
 
+    <?php if (!$task->content->canEdit() & $canClone) : ?>
+        <div class="task-controls end pull-right">
+            <div class="btn-group">
+                <?= Link::none()->icon('fa-ellipsis-v')
+                    ->cssClass('dropdown-toggle')
+                    ->options([
+                        'data-toggle' => 'dropdown',
+                        'haspopup' => 'true',
+                        'aria-expanded' => 'false'
+                    ])->sm()->loader(false) ?>
+                <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu pull-right">
+                    <li>
+                        <?= Button::asLink(Yii::t('TasksModule.base', 'Clone task'))
+                            ->action('task.list.editTask', TaskUrl::cloneTask($task))
+                            ->icon('fa-clone'); ?>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="task-controls pull-right toggleTaskDetails hidden-xs"
          style="<?= (!$task->content->canEdit()) ? 'border-right:0;margin-right:0' : '' ?>">
         <i class="fa fa-comment-o"></i> <?= Comment::getCommentCount(Task::class, $task->id); ?>

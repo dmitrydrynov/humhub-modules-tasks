@@ -8,6 +8,7 @@ use humhub\modules\content\components\ContentContainerController;
 use humhub\modules\tasks\models\forms\TaskFilter;
 use humhub\modules\tasks\models\Task;
 use humhub\modules\tasks\permissions\CreateTask;
+use humhub\modules\tasks\permissions\CloneTask;
 use humhub\modules\tasks\permissions\ManageTasks;
 use humhub\modules\tasks\traits\DataExport;
 use Yii;
@@ -35,6 +36,11 @@ abstract class AbstractTaskController extends ContentContainerController
     protected function canManageTasks()
     {
         return $this->contentContainer->can(ManageTasks::class);
+    }
+
+    protected function canCloneTask()
+    {
+        return $this->contentContainer->can(CloneTask::class);
     }
 
     /**

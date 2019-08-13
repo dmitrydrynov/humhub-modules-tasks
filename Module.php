@@ -6,6 +6,7 @@ use humhub\modules\tasks\helpers\TaskUrl;
 use humhub\modules\tasks\models\lists\TaskList;
 use humhub\modules\tasks\permissions\ProcessUnassignedTasks;
 use humhub\modules\tasks\permissions\CreateTask;
+use humhub\modules\tasks\permissions\CloneTask;
 use humhub\modules\tasks\permissions\ManageTasks;
 use Yii;
 use yii\helpers\Url;
@@ -109,6 +110,7 @@ class Module extends ContentContainerModule
         if ($contentContainer instanceof Space) {
             return [
                 new CreateTask(),
+                new CloneTask(),
                 new ManageTasks(),
                 new ProcessUnassignedTasks(),
             ];

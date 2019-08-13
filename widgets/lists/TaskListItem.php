@@ -14,6 +14,7 @@ use humhub\modules\content\components\ContentContainerActiveRecord;
 use humhub\modules\tasks\helpers\TaskListUrl;
 use humhub\modules\tasks\models\Task;
 use humhub\modules\tasks\permissions\ManageTasks;
+use humhub\modules\tasks\permissions\CloneTask;
 use humhub\widgets\JsWidget;
 use Yii;
 
@@ -49,6 +50,8 @@ class TaskListItem extends JsWidget
      */
     public $canManage = false;
 
+    public $canClone = false;
+
     /**
      * @inheritdoc
      */
@@ -64,10 +67,12 @@ class TaskListItem extends JsWidget
     public function run()
     {
         $this->canManage =  $this->contentContainer->can(ManageTasks::class);
+        $this->canClone =  $this->contentContainer->can(CloneTask::class);
         return $this->render('taskListItem', [
             'task' => $this->task,
             'details' => $this->details,
             'canManage' => $this->canManage,
+            'canClone' => $this->canClone,
             'options' => $this->getOptions()
         ]);
     }

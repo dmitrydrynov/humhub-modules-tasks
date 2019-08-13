@@ -11,6 +11,7 @@ use humhub\modules\tasks\models\forms\ItemDrop;
 use humhub\modules\tasks\models\forms\TaskForm;
 use humhub\modules\tasks\models\user\TaskUser;
 use humhub\modules\tasks\permissions\CreateTask;
+use humhub\modules\tasks\permissions\CloneTask;
 use humhub\modules\tasks\permissions\ManageTasks;
 use humhub\modules\user\models\UserPicker;
 use humhub\widgets\ModalClose;
@@ -43,7 +44,7 @@ class TaskController extends AbstractTaskController
     {
         $isNewTask = empty($id);
 
-        if($isNewTask && !$this->contentContainer->can([CreateTask::class, ManageTasks::class])) {
+        if($isNewTask && !$this->contentContainer->can([CreateTask::class, ManageTasks::class, CloneTask::class])) {
             throw new HttpException(403);
         }
 

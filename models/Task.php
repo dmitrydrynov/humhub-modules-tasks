@@ -14,6 +14,7 @@ use humhub\modules\space\modules\manage\models\MembershipSearch;
 use humhub\modules\tasks\helpers\TaskUrl;
 use humhub\modules\tasks\permissions\CreateTask;
 use humhub\modules\tasks\permissions\ProcessUnassignedTasks;
+use humhub\modules\tasks\permissions\CloneTask;
 use humhub\modules\user\components\ActiveQueryUser;
 use Yii;
 use yii\db\ActiveQuery;
@@ -817,7 +818,7 @@ class Task extends ContentActiveRecord implements Searchable
     public function canEdit()
     {
         if ($this->isNewRecord) {
-            return $this->content->container->can([CreateTask::class, ManageTasks::class]);
+            return $this->content->container->can([CreateTask::class, ManageTasks::class, CloneTask::class]);
         } else if (!$this->hasTaskResponsible()) {
             return  $this->content->container->can([ManageTasks::class]);
         }
@@ -1074,19 +1075,5 @@ class Task extends ContentActiveRecord implements Searchable
         if ($this->task_list_id && $this->list) {
             return $this->list->getColor();
         }
-    }
-
-    public function gerSumCustomFieldsByUser($custom_field_name) {
-
-        $user = Yii::$app->user->getIdentity();
-
-        $sum = self::find()
-            ->leftJoin('task_user', 'task.id=task_user.task_id', [])
-            ->where(['task_user.user_id' => $user->id])
-            ->andWhere(['task_user.user_type' => Task::USER_ASSIGNED])
-            ->andWhere(['task.status' => Task::STATUS_COMPLETED])
-            ->sum('cf_'. $custom_field_name);
-
-        return $sum > 0 ? $sum : 0;
     }
 }

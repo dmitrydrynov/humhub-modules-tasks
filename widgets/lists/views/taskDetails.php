@@ -75,6 +75,8 @@ if (($task->schedule->isOverdue())) {
         <?php endif; ?>
 
     </div>
-
-    <?= WallEntryAddons::widget(['object' => $task]); ?>
+    
+    <?php //if(!$task->isCompleted()) : ?>
+        <?= WallEntryAddons::widget(['object' => $task]); ?>
+    <?php //endif ?>
 </div>
