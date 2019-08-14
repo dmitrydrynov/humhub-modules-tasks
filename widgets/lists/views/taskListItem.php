@@ -71,11 +71,15 @@ $custom_fields = Task::getCustomFields();
                             ->action('task.list.editTask', TaskUrl::editTask($task))
                             ->icon('fa-pencil'); ?>
                     </li>
-                    <li>
-                        <?= Button::asLink(Yii::t('TasksModule.base', 'Clone task'))
-                            ->action('task.list.editTask', TaskUrl::cloneTask($task))
-                            ->icon('fa-clone'); ?>
-                    </li>
+
+                    <?php if ($canClone) : ?>
+                        <li>
+                            <?= Button::asLink(Yii::t('TasksModule.base', 'Clone task'))
+                                ->action('task.list.editTask', TaskUrl::cloneTask($task))
+                                ->icon('fa-clone'); ?>
+                        </li>
+                    <?php endif; ?>
+                    
                     <li>
                         <?= MoveContentLink::widget(['model' => $task]) ?>
                     </li>
