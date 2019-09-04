@@ -127,7 +127,7 @@ class TaskController extends AbstractTaskController
 
             $response = $new_task->state->proceed($status);
 
-            if($response) {                
+            if($response) {
                 return $this->asJson(['success' => true]);
             }
         }
