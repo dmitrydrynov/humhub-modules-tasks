@@ -14,6 +14,7 @@ use humhub\modules\tasks\models\Task;
 /** @var $includeOverdue boolean **/
 
 ?>
+
 <?php if ($task->status == Task::STATUS_PENDING && in_array(TASK::STATUS_PENDING, $include)) : ?>
     <i class="fa fa-info-circle colorSuccess tt" title="<?= Yii::t('TasksModule.views_index_index', 'Pending') ?>"></i>
 <?php elseif ($task->status == Task::STATUS_IN_PROGRESS && in_array(TASK::STATUS_IN_PROGRESS, $include)) : ?>

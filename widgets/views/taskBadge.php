@@ -14,6 +14,11 @@ use humhub\modules\tasks\models\Task;
 /** @var $right boolean **/
 
 ?>
+
+<?php if ($task->is_template) : ?>
+    <div class="label label-primary <?= $right ? 'pull-right' : '' ?>"><?= '<i class="fa fa-info-circle"></i> ' . Yii::t('TasksModule.views_index_index', 'Temaplte Task'); ?></div>
+<?php endif; ?>
+
 <?php if ($task->status == Task::STATUS_PENDING && $includePending) : ?>
     <div class="label label-default <?= $right ? 'pull-right' : '' ?>"><?= '<i class="fa fa-info-circle"></i> ' . Yii::t('TasksModule.views_index_index', 'Pending'); ?></div>
 <?php elseif ($task->status == Task::STATUS_IN_PROGRESS) : ?>

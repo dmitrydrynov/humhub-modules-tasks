@@ -237,8 +237,10 @@ class Task extends ContentActiveRecord implements Searchable
     public function rules()
     {
         return array_merge([
+            [['id', 'created_by', 'updated_by', 'time_zone'], 'safe'],
             [['title'], 'required'],
             [['color'], 'string', 'max' => 7],
+            [['is_template'], 'safe'],
             [['start_datetime', 'end_datetime'], 'required', 'when' => function ($model) {
                 return $model->scheduling == 1;
             }, 'whenClient' => "function (attribute, value) {
@@ -262,7 +264,7 @@ class Task extends ContentActiveRecord implements Searchable
         $output = [];
 
         if (count($custom_fields) > 0) foreach ($custom_fields as $custom_field) {
-            $output[] = [['cf_'. $custom_field->internal_name], 'safe'];
+            $output[] = [['cf_' . $custom_field->internal_name], 'safe'];
         }
 
         return $output;
@@ -1034,6 +1036,93 @@ class Task extends ContentActiveRecord implements Searchable
     public function moveItemIndex($itemId, $newIndex)
     {
         $this->checklist->moveItemIndex($itemId, $newIndex);
+    }
+
+    public static function clone($contentContainer, $clone_id, $isFormData = false)
+    {
+        $clone_task = Task::find()->contentContainer($contentContainer)->where(['task.id' => $clone_id])->one();
+
+        // init clone task
+        $new_task = new Task();
+        $new_task->setAttributes($clone_task->getAttributes());
+        $new_task->id = null;
+        $new_task->isNewRecord = true;
+        $new_task->content->container = $contentContainer;
+
+        if($isFormData == false) {
+            $new_task->save();
+        }
+
+        // clone reminders
+        $new_task->selectedReminders = [];
+        foreach (TaskReminder::findAll(['task_id' => $clone_id]) as $taskReminder) {
+            $new_task->selectedReminders[] = $taskReminder->remind_mode;
+
+            if($isFormData == false) {
+                $new_task->schedule->addTaskReminder($taskReminder->remind_mode);
+            }
+        }
+
+        // clone assigned and responible users
+        $new_task->assignedUsers = [];
+        $new_task->responsibleUsers = [];
+        foreach (TaskUser::findAll(['task_id' => $clone_id]) as $taskUser) {
+            // if ($taskUser->user_type === Task::USER_ASSIGNED) {
+            //     $new_task->assignedUsers[] = $taskUser->getUser()->guid;
+            // }
+            if ($taskUser->user_type === Task::USER_RESPONSIBLE) {
+                $new_task->responsibleUsers[] = $taskUser->getUser()->guid;
+
+                if($isFormData == false) {
+                    $new_task->addTaskResponsible($taskUser->getUser()->guid);
+                }
+            }
+        }
+
+        // clone checklist items
+        $new_items = [];
+        foreach ($clone_task->getItems()->all() as $item) {
+            $new_items[] = $item->title;
+
+            if($isFormData == false) {
+                $new_task->newItems = $new_items;
+            }
+        }
+
+        // 1. Find files for clone task
+        $files = $clone_task->fileManager->findAll();
+        $clone_files = [];
+        // 2. Copy files (Upload) for new task
+        if (count($files) > 0) foreach ($files as $file) {
+
+            $file_path = $file->getStore()->get();
+            $fileContent = stream_get_contents(fopen($file_path, 'r'));
+
+            $clone_file = new \humhub\modules\file\models\File();
+
+            if ($clone_file->save()) {
+
+                $clone_file->store->setContent($fileContent);
+                $clone_file->file_name = $file->filename;
+                $clone_file->mime_type = $file->mime_type;
+                $clone_file->size = $file->size;
+                $clone_file->save();
+
+                $clone_files[] = $clone_file->guid;
+            }
+        }
+
+        if($isFormData) {
+            return [
+                'task' => $new_task,
+                'items' => $new_items,
+                'files' => $clone_files,
+            ];
+        }else{
+            $new_task->saveNewItems();
+
+            return $new_task;
+        }        
     }
 
     /**

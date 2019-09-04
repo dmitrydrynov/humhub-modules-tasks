@@ -54,66 +54,19 @@ class TaskController extends AbstractTaskController
             $taskForm->createNew($this->contentContainer);
 
             if($clone_id) {
-                $clone_task = Task::find()->contentContainer($this->contentContainer)->where(['task.id' => $clone_id])->one();
-                
-                // init clone task
-                $new_task = clone $clone_task;
-                $new_task->id = null;
-                $new_task->isNewRecord = true;
-                
-                // clone reminders
-                $new_task->selectedReminders = [];
-                foreach (TaskReminder::findAll(['task_id' => $clone_id]) as $taskReminder) {
-                    $new_task->selectedReminders[] = $taskReminder->remind_mode;
-                }
 
-                // clone assigned and responible users
-                $new_task->assignedUsers = [];
-                $new_task->responsibleUsers = [];
-                foreach (TaskUser::findAll(['task_id' => $clone_id]) as $taskUser) {
-                    if($taskUser->user_type === Task::USER_ASSIGNED) {
-                        $new_task->assignedUsers[] = $taskUser->getUser()->guid;
-                    }
-                    if($taskUser->user_type === Task::USER_RESPONSIBLE) {
-                        $new_task->responsibleUsers[] = $taskUser->getUser()->guid;
-                    }
-                }
+                $new_task_data = Task::clone($this->contentContainer, $clone_id, true);
 
-                // clone checklist items
-                $newItems = [];
-                foreach ($clone_task->getItems()->all() as $item) {
-                    $newItems[] = $item->title;
-                }
+                $new_task = $new_task_data['task'];
+                $new_files = $new_task_data['files'];
+                $new_items = $new_task_data['items'];
 
-                // 1. Find files for clone task
-                $files = $clone_task->fileManager->findAll(); 
-                $clone_files = [];
-                // 2. Copy files (Upload) for new task
-                if(count($files) > 0) foreach($files as $file) { 
-                    
-                    $file_path = $file->getStore()->get();  
-                    $fileContent = stream_get_contents(fopen($file_path, 'r'));
-
-                    $clone_file = new \humhub\modules\file\models\File();
-
-                    if($clone_file->save()) {
-
-                        $clone_file->store->setContent($fileContent);
-                        $clone_file->file_name = $file->filename;
-                        $clone_file->mime_type = $file->mime_type;
-                        $clone_file->size = $file->size;
-                        $clone_file->save();
-
-                        $clone_files[] = $clone_file->guid;
-                    }
-                }
-
-                Yii::$app->request->setBodyParams(['fileList' => $clone_files]);
+                Yii::$app->request->setBodyParams(['fileList' => $new_files]);
 
                 $taskForm->task = $new_task;
                 $taskForm->is_public = $new_task->content->visibility;
                 $taskForm->translateDateTimes($new_task->start_datetime, $new_task->end_datetime, Yii::$app->timeZone, $taskForm->timeZone);
-                $taskForm->newItems = $newItems;
+                $taskForm->newItems = $new_items;
             }
         } else {
 
@@ -160,6 +113,28 @@ class TaskController extends AbstractTaskController
         if(!$task->state->canProceed($status)) {
             throw new HttpException(403);
         }
+
+        $task->addTaskAssigned(Yii::$app->user->guid);
+
+        if($task->is_template) {
+            //clone task, add user, change status to in progress
+            $new_task = Task::clone($this->contentContainer, $id);
+
+            $new_task->addTaskAssigned(Yii::$app->user->guid);
+
+            $new_task->is_template = false;
+            $new_task->task_list_id = null;
+
+            $new_task->save();
+
+            $response = $new_task->state->proceed($status);
+
+            if($response) {
+                $this->view->success(Yii::t('TasksModule.controller', 'Task created'));
+                
+                return $this->asJson(['success' => true]);
+            }
+        } 
 
         return $this->asJson(['success' => $task->state->proceed($status)]);
     }
