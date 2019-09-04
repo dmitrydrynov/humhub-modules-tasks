@@ -127,9 +127,7 @@ class TaskController extends AbstractTaskController
 
             $response = $new_task->state->proceed($status);
 
-            if($response) {
-                $this->view->success(Yii::t('TasksModule.controller', 'Task created'));
-                
+            if($response) {                
                 return $this->asJson(['success' => true]);
             }
         }
