@@ -127,12 +127,8 @@ class TaskController extends AbstractTaskController
 
             $response = $new_task->state->proceed($status);
 
-            if($response) {
-                return $this->asJson(['success' => true]);
-            }
+            return $this->asJson(['success' => $new_task->state->proceed($status)]);
         }
-
-        $task->addTaskAssigned(Yii::$app->user->guid);
 
         return $this->asJson(['success' => $task->state->proceed($status)]);
     }
