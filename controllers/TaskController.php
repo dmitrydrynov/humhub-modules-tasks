@@ -114,8 +114,6 @@ class TaskController extends AbstractTaskController
             throw new HttpException(403);
         }
 
-        $task->addTaskAssigned(Yii::$app->user->guid);
-
         if($task->is_template) {
             //clone task, add user, change status to in progress
             $new_task = Task::clone($this->contentContainer, $id);
@@ -134,7 +132,9 @@ class TaskController extends AbstractTaskController
                 
                 return $this->asJson(['success' => true]);
             }
-        } 
+        }
+
+        $task->addTaskAssigned(Yii::$app->user->guid);
 
         return $this->asJson(['success' => $task->state->proceed($status)]);
     }
