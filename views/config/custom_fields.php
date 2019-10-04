@@ -24,21 +24,21 @@ use humhub\modules\tasks\helpers\TaskUrl;
     <div class="panel-body">
         <?php $form = ActiveForm::begin(); ?>
 
-            <h4><?= Yii::t('TasksModule.config', 'Add new custom field'); ?></h4>
+        <h4><?= Yii::t('TasksModule.config', 'Add new custom field'); ?></h4>
 
-            <?= $form->field($model, 'title')->input('text') ?>
-            <?= $form->field($model, 'internal_name')->input('text') ?>
-            
-            <?= $form->field($model, 'type')->dropDownList([
-                'number' => 'Number',
-                'text' => 'Text',
-            ]); ?>
+        <?= $form->field($model, 'title')->input('text') ?>
+        <?= $form->field($model, 'internal_name')->input('text') ?>
 
-            <?= $form->field($model, 'icon_class')->input('text') ?>
-            
-            <?= $form->field($model, 'value')->input('text') ?>
+        <?= $form->field($model, 'type')->dropDownList([
+            'number' => 'Number',
+            'text' => 'Text',
+        ]); ?>
 
-            <?= Html::submitButton('Add Field', ['class' => 'btn btn-primary', 'data-ui-loader' => '']) ?>
+        <?= $form->field($model, 'icon_class')->input('text') ?>
+
+        <?= $form->field($model, 'value')->input('text') ?>
+
+        <?= Html::submitButton('Add Field', ['class' => 'btn btn-primary', 'data-ui-loader' => '']) ?>
 
         <?php ActiveForm::end(); ?>
 
@@ -59,9 +59,12 @@ use humhub\modules\tasks\helpers\TaskUrl;
                 </tr>
             </thead>
             <tbody>
-                <?php if(count($fields_list) > 0) : ?>
-                    <?php foreach($fields_list as $field) : ?>
+                <?php if (count($fields_list) > 0) : ?>
+                    <?php foreach ($fields_list as $field) : ?>
                         <tr>
+                            <td class="text-center">
+                                <i class="<?= $field->icon_class ?>"></i>
+                            </td>
                             <td>
                                 <?= $field->title ?>
                             </td>
