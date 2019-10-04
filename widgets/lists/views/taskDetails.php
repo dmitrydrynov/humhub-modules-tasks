@@ -46,9 +46,8 @@ if (($task->schedule->isOverdue())) {
                     echo TaskInfoBox::widget([
                         'title' => Yii::t('TasksModule.base', $custom_field->title),
                         'value' => $value,
-                        'icon' => 'fa-clock-o',
+                        'icon' => $custom_field->icon_class ? $custom_field->icon_class : 'fa fa-genderless',
                         'textClass' => '']);
-
                 }
 
             ?>

@@ -201,6 +201,7 @@ class TaskController extends AbstractTaskController
         ]);
     }
 
+
     public function actionDelete($id)
     {
         $this->forcePostRequest();

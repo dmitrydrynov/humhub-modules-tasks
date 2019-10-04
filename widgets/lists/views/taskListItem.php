@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @link https://www.humhub.org/
  * @copyright Copyright (c) 2018 HumHub GmbH & Co. KG
@@ -35,11 +36,12 @@ $custom_fields = Task::getCustomFields();
 <div class="task-list-task-title-bar">
     <span class="task-list-item-title">
 
-         <?php if ($canManage && !$task->isCompleted()) : ?>
-             <i class="fa fa-bars task-moving-handler"></i>
-         <?php endif; ?>
+        <?php if ($canManage && !$task->isCompleted()) : ?>
+            <i class="fa fa-bars task-moving-handler"></i>
+        <?php endif; ?>
 
-        <?php // We use an extra label in order to prevent click events on the actual label otherwise tasks could be accidentally finished ?>
+        <?php // We use an extra label in order to prevent click events on the actual label otherwise tasks could be accidentally finished 
+        ?>
         <?= Html::checkBox('item[' . $task->id . ']', $task->isCompleted(), [
             'label' => '&nbsp;',
             'data-action-change' => 'changeState',
@@ -79,7 +81,7 @@ $custom_fields = Task::getCustomFields();
                                 ->icon('fa-clone'); ?>
                         </li>
                     <?php endif; ?>
-                    
+
                     <li>
                         <?= MoveContentLink::widget(['model' => $task]) ?>
                     </li>
@@ -118,8 +120,7 @@ $custom_fields = Task::getCustomFields();
         </div>
     <?php endif; ?>
 
-    <div class="task-controls pull-right toggleTaskDetails hidden-xs"
-         style="<?= (!$task->content->canEdit()) ? 'border-right:0;margin-right:0' : '' ?>">
+    <div class="task-controls pull-right toggleTaskDetails hidden-xs" style="<?= (!$task->content->canEdit()) ? 'border-right:0;margin-right:0' : '' ?>">
         <i class="fa fa-comment-o"></i> <?= Comment::getCommentCount(Task::class, $task->id); ?>
     </div>
 
@@ -148,8 +149,7 @@ $custom_fields = Task::getCustomFields();
 
     <?php if ($task->review) : ?>
         <div class="task-controls pull-right toggleTaskDetails">
-            <i class="fa fa-eye tt hidden-xs tt"
-               title="<?= Yii::t('TasksModule.base', 'This task requires to be reviewed by a responsible') ?>"></i>
+            <i class="fa fa-eye tt hidden-xs tt" title="<?= Yii::t('TasksModule.base', 'This task requires to be reviewed by a responsible') ?>"></i>
         </div>
     <?php endif; ?>
 
@@ -160,19 +160,18 @@ $custom_fields = Task::getCustomFields();
         </div>
     <?php endif; ?>
 
-        
-    <?php if(count($custom_fields) > 0) foreach($custom_fields as $custom_field) :
-        
-        $field_name = 'cf_'. $custom_field->internal_name;
+
+    <?php if (count($custom_fields) > 0) foreach ($custom_fields as $custom_field) :
+
+        $field_name = 'cf_' . $custom_field->internal_name;
         $value = $task->$field_name ? $task->$field_name : 0;
 
-        ?>
-
-        <div class="task-controls pull-right toggleTaskDetails hidden-xs">
-
-            <?= $custom_field->getAcronymName() ?> <?= $value ?>
-
-        </div>
+    ?>
+        <?php if ($value != 0) : ?>
+            <div class="task-controls pull-right toggleTaskDetails hidden-xs">
+                <i class="<?= $custom_field->icon_class ?>"></i> <?= $value ?>
+            </div>
+        <?php endif ?>
 
     <?php endforeach ?>
 
@@ -181,5 +180,3 @@ $custom_fields = Task::getCustomFields();
     <?= TaskListDetails::widget(['task' => $task]) ?>
 <?php endif; ?>
 <?= Html::endTag('div') ?>
-
-

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @link https://www.humhub.org/
  * @copyright Copyright (c) 2018 HumHub GmbH & Co. KG
@@ -30,12 +31,14 @@ $image = $task->content->container instanceof Space
         'space' => $task->content->container,
         'width' => '24',
         'showTooltip' => true,
-        'link' => true])
+        'link' => true
+    ])
     : UserImage::widget([
         'user' => $task->content->container,
         'width' => '24',
         'showTooltip' => true,
-        'link' => true]);
+        'link' => true
+    ]);
 
 ?>
 
@@ -44,7 +47,7 @@ $image = $task->content->container instanceof Space
     <div class="task-head">
         <div class="media-body clearfix">
 
-            <?php if(!$contentContainer) : ?>
+            <?php if (!$contentContainer) : ?>
 
                 <div class="task-controls" style="display:inline">
                     <?= $image ?>
@@ -65,18 +68,17 @@ $image = $task->content->container instanceof Space
                 <?= TaskUserList::widget(['users' => $task->taskAssignedUsers]) ?>
             </div>
 
-            <?php if(count($custom_fields) > 0) foreach($custom_fields as $custom_field) :
-        
-                $field_name = 'cf_'. $custom_field->internal_name;
+            <?php if (count($custom_fields) > 0) foreach ($custom_fields as $custom_field) :
+
+                $field_name = 'cf_' . $custom_field->internal_name;
                 $value = $task->$field_name ? $task->$field_name : 0;
 
-                ?>
-
-                <div class="task-controls pull-right toggleTaskDetails hidden-xs">
-
-                    <?= $custom_field->getAcronymName() ?> <?= $value ?>
-
-                </div>
+            ?>
+                <?php if ($value != 0) : ?>
+                    <div class="task-controls pull-right toggleTaskDetails hidden-xs">
+                        <i class="<?= $custom_field->icon_class ?>"></i> <?= $value ?>
+                    </div>
+                <?php endif ?>
 
             <?php endforeach ?>
 

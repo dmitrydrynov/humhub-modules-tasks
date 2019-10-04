@@ -33,6 +33,8 @@ use humhub\modules\tasks\helpers\TaskUrl;
                 'number' => 'Number',
                 'text' => 'Text',
             ]); ?>
+
+            <?= $form->field($model, 'icon_class')->input('text') ?>
             
             <?= $form->field($model, 'value')->input('text') ?>
 
@@ -49,9 +51,10 @@ use humhub\modules\tasks\helpers\TaskUrl;
         <table class="table">
             <thead>
                 <tr>
+                    <th>Иконка</th>
                     <th>Название</th>
+                    <th>Имя колонки в БД</th>
                     <th>Тип данных</th>
-                    <th>Значение по умолчанию</th>
                     <th></th>
                 </tr>
             </thead>
