@@ -6,8 +6,8 @@
  *
  */
 
-use humhub\widgets\Button;
-
+use humhub\modules\space\models\Space;
+use humhub\modules\tasks\assets\Assets;
 use humhub\widgets\ModalDialog;
 use humhub\widgets\ModalButton;
 use humhub\widgets\ActiveForm;
@@ -15,9 +15,22 @@ use humhub\widgets\Tabs;
 
 /* @var $taskForm \humhub\modules\tasks\models\forms\TaskForm */
 
-\humhub\modules\tasks\assets\Assets::register($this);
+Assets::register($this);
 
 $task = $taskForm->task;
+
+$tabs = [
+    ['label' => Yii::t('TasksModule.views_index_edit', 'Basic'), 'view' => 'edit-basic', 'linkOptions' => ['class' => 'tab-basic']],
+    ['label' => Yii::t('TasksModule.views_index_edit', 'Scheduling'), 'view' => 'edit-scheduling', 'linkOptions' => ['class' => 'tab-scheduling']]
+];
+
+if($taskForm->getContentContainer() instanceof Space) {
+    $tabs[] = ['label' => Yii::t('TasksModule.views_index_edit', 'Assignment'), 'view' => 'edit-assignment', 'linkOptions' => ['class' => 'tab-assignment']];
+}
+
+$tabs[] = ['label' => Yii::t('TasksModule.views_index_edit', 'Checklist'), 'view' => 'edit-checklist', 'linkOptions' => ['class' => 'tab-checklist']];
+$tabs[] = ['label' => Yii::t('TasksModule.views_index_edit', 'Files'), 'view' => 'edit-files', 'linkOptions' => ['class' => 'tab-files']];
+$tabs[] = ['label' => Yii::t('TasksModule.views_index_edit', 'Custom Fields'), 'view' => 'edit-custom-fields', 'linkOptions' => ['class' => 'tab-custom-fields']];
 
 ?>
 
@@ -30,14 +43,7 @@ $task = $taskForm->task;
             <?= Tabs::widget([
                 'viewPath' => '@tasks/views/task',
                 'params' => ['form' => $form, 'taskForm' => $taskForm],
-                'items' => [
-                    ['label' => Yii::t('TasksModule.views_index_edit', 'Basic'), 'view' => 'edit-basic', 'linkOptions' => ['class' => 'tab-basic']],
-                    ['label' => Yii::t('TasksModule.views_index_edit', 'Scheduling'), 'view' => 'edit-scheduling', 'linkOptions' => ['class' => 'tab-scheduling']],
-                    ['label' => Yii::t('TasksModule.views_index_edit', 'Assignment'), 'view' => 'edit-assignment', 'linkOptions' => ['class' => 'tab-assignment']],
-                    ['label' => Yii::t('TasksModule.views_index_edit', 'Checklist'), 'view' => 'edit-checklist', 'linkOptions' => ['class' => 'tab-checklist']],
-                    ['label' => Yii::t('TasksModule.views_index_edit', 'Files'), 'view' => 'edit-files', 'linkOptions' => ['class' => 'tab-files']],
-                    ['label' => Yii::t('TasksModule.views_index_edit', 'Custom Fields'), 'view' => 'edit-custom-fields', 'linkOptions' => ['class' => 'tab-custom-fields']]
-                ]
+                'items' => $tabs
             ]); ?>
 
         </div>

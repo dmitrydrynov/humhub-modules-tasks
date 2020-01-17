@@ -11,7 +11,6 @@ git:
   depth: 3
 
 php:
-  - '5.6'
   - '7.0'
   - '7.1'
   - '7.2'
@@ -21,12 +20,10 @@ env:
     - HUMHUB_PATH=/opt/humhub
   matrix:
     - HUMHUB_VERSION=master
+    - HUMHUB_VERSION=develop
     - HUMHUB_VERSION=v1.3.8
 
 matrix:
-  exclude:
-    - php: '7.2'
-      env: HUMHUB_VERSION=v1.2.5
   fast_finish: true
 
 

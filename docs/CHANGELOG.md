@@ -1,6 +1,25 @@
 Changelog
 =========
 
+1.3.3 (October, 16, 2019)
+--------------------
+- Fix: Invalid date range in calendar integration
+- Fix: Invalid date format used when default input format is fixed
+- Enh: Translation updates
+
+1.3.2 (October, 16, 2019)
+--------------------
+- Enh: 1.4 csp nonce support
+
+1.3.1 (October, 04, 2019)
+--------------------
+- Enh: Allow module installation on user profile
+- Fix: Task list sorting not working when dragging to last index
+- Chng: The export now has an Container, ContainerType and ContainerId field instead of Space and SpaceId
+- Fix #12: Do not notify assigned user when user assigns himself
+- Fix #96: Created by filter not working
+- Fix: Task space navigation only visible for space members
+
 1.3.0 (May, 9, 2019)
 --------------------
 - Enh: Filter by container related tasks in "Your tasks" snippet.
